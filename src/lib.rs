@@ -1,6 +1,6 @@
 pub mod allocator;
 mod core;
-pub mod thread;
+mod thread;
 
 #[cfg(test)]
 mod tests {
