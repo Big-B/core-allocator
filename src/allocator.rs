@@ -3,6 +3,10 @@ use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::fmt;
 
+/// Allocator struct to keep track of the utilization of cores and to allocate
+/// those cores based in order of lowest utilization first. Utilization is
+/// defined as the sum of the priorities of the threads that have been allocated
+/// to that core.
 #[derive(Debug)]
 pub struct Allocator {
     cores: BinaryHeap<Core>,
