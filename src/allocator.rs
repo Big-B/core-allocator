@@ -1,6 +1,7 @@
 use core::Core;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
+use std::fmt;
 
 #[derive(Debug)]
 pub struct Allocator {
@@ -98,5 +99,13 @@ impl Allocator {
             // Place updated cores in our heap
             self.cores.append(&mut temp);
         }
+    }
+}
+
+impl fmt::Display for Allocator {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.cores
+            .iter()
+            .try_for_each(|core| write!(f, "{}", core))
     }
 }
