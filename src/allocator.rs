@@ -2,6 +2,7 @@ use core::Core;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
 
+#[derive(Debug)]
 pub struct Allocator {
     cores: BinaryHeap<Core>,
     mappings: HashMap<String, usize>,

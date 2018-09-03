@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use std::fmt;
 
 #[derive(Debug, Clone, Eq)]
 pub struct Thread {
@@ -42,5 +43,11 @@ impl Ord for Thread {
         } else {
             Ordering::Equal
         }
+    }
+}
+
+impl fmt::Display for Thread {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Thread(Priority): {}({})", self.thread_name, self.priority)
     }
 }

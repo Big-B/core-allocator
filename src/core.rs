@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 use std::collections::HashMap;
+use std::fmt;
 use thread::Thread;
 
 #[derive(Debug, Clone, Eq)]
@@ -59,5 +60,15 @@ impl Ord for Core {
         } else {
             Ordering::Equal
         }
+    }
+}
+
+impl fmt::Display for Core {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Core: {}", self.core_number)?;
+        write!(f, "Utilization Sum: {}", self.utilization)?;
+
+        self.threads.iter().try_for_each(|(_, v)| write!(f, "{}", v))?;
+        Ok(())
     }
 }
