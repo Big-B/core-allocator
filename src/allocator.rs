@@ -1,17 +1,19 @@
 use core::Core;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
-use std::sync::Mutex;
 
 pub struct Allocator {
-    cores: Mutex<BinaryHeap<Core>>,
-    mappings: Mutex<HashMap<String, usize>>,
+    cores: BinaryHeap<Core>,
+    mappings: HashMap<String, usize>,
 }
 
 impl Allocator {
     /// Creates a core allocator which will distribute to threads the cores
     /// which have been passed in.
     /// ```
+    /// # extern crate core_allocator;
+    /// use core_allocator::allocator::Allocator;
+    ///
     /// let mut allocator = Allocator::new(vec![1,2,3]);
     /// ```
     pub fn new(mut cores_list: Vec<usize>) -> Self {
@@ -24,20 +26,27 @@ impl Allocator {
 
         // Return Allocator
         Allocator {
-            cores: Mutex::new(map),
-            mappings: Mutex::new(HashMap::new()),
+            cores: map,
+            mappings: HashMap::new(),
         }
     }
 
     /// Get a core for a thread. If the same `thread_name` is passed in more than once
     /// then it will get the same core.
+    /// ```
+    /// # extern crate core_allocator;
+    /// use core_allocator::allocator::Allocator;
+    ///
+    /// let mut allocator = Allocator::new(vec![1,2,3]);
+    /// let thread_name = "example";
+    /// let priority    = 89;
+    /// let core = allocator.get_core_for_thread(thread_name, priority);
+    /// ```
     pub fn get_core_for_thread(&mut self, thread_name: &str, priority: usize) -> usize {
-        let mut map = self.mappings.lock().unwrap();
-        let mut heap = self.cores.lock().unwrap();
         // Check to see if we already serviced this thread
-        *map.entry(thread_name.to_owned()).or_insert(
+        *self.mappings.entry(thread_name.to_owned()).or_insert(
             // We haven't serviced this thread, get a core and add to map
-            if let Some(mut core) = heap.pop() {
+            if let Some(mut core) = self.cores.pop() {
                 // Get the core number
                 let core_num = core.get_core_num();
 
@@ -45,7 +54,7 @@ impl Allocator {
                 core.add_thread(thread_name, priority);
 
                 // Return core to heap
-                heap.push(core);
+                self.cores.push(core);
 
                 // Give back the core number
                 core_num
@@ -58,17 +67,25 @@ impl Allocator {
     }
 
     /// Remove a thread from a core.
+    /// ```
+    /// # extern crate core_allocator;
+    /// use core_allocator::allocator::Allocator;
+    ///
+    /// let mut allocator = Allocator::new(vec![1,2,3]);
+    /// let thread_name = "example";
+    /// let priority    = 89;
+    /// let core = allocator.get_core_for_thread(thread_name, priority);
+    ///
+    /// allocator.remove_thread_from_core(thread_name);
+    /// ```
     pub fn remove_thread_from_core(&mut self, thread_name: &str) {
-        let mut map = self.mappings.lock().unwrap();
         // Check to see if thread has been added already
-        if let Some(core_num) = map.remove(thread_name) {
+        if let Some(core_num) = self.mappings.remove(thread_name) {
             // Create a temporary heap to move cores to
             let mut temp = BinaryHeap::new();
 
-            let mut heap = self.cores.lock().unwrap();
-
             // Search for the right core to remove the thread from
-            while let Some(mut core) = heap.pop() {
+            while let Some(mut core) = self.cores.pop() {
                 // Core num needs to match
                 if core.get_core_num() == core_num {
                     // Remove the thread
@@ -78,7 +95,7 @@ impl Allocator {
                 temp.push(core);
             }
             // Place updated cores in our heap
-            heap.append(&mut temp);
+            self.cores.append(&mut temp);
         }
     }
 }
