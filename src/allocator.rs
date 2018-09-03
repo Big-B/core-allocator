@@ -78,9 +78,9 @@ impl Allocator {
     /// let priority    = 89;
     /// let core = allocator.get_core_for_thread(thread_name, priority);
     ///
-    /// allocator.remove_thread_from_core(thread_name);
+    /// allocator.remove_thread(thread_name);
     /// ```
-    pub fn remove_thread_from_core(&mut self, thread_name: &str) {
+    pub fn remove_thread(&mut self, thread_name: &str) {
         // Check to see if thread has been added already
         if let Some(core_num) = self.mappings.remove(thread_name) {
             // Create a temporary heap to move cores to
