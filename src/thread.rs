@@ -48,6 +48,10 @@ impl Ord for Thread {
 
 impl fmt::Display for Thread {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Thread(Priority): {}({})", self.thread_name, self.priority)
+        write!(
+            f,
+            "Thread(Priority): {}({})",
+            self.thread_name, self.priority
+        )
     }
 }

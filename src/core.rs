@@ -68,7 +68,9 @@ impl fmt::Display for Core {
         write!(f, "Core: {}", self.core_number)?;
         write!(f, "Utilization Sum: {}", self.utilization)?;
 
-        self.threads.iter().try_for_each(|(_, v)| write!(f, "{}", v))?;
+        self.threads
+            .iter()
+            .try_for_each(|(_, v)| write!(f, "{}", v))?;
         Ok(())
     }
 }

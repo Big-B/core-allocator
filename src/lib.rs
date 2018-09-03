@@ -32,8 +32,10 @@ mod tests {
             let _ = allocator.get_core_for_thread(&thread_name, i);
         }
 
-        assert_eq!(allocator.get_core_for_thread(thread_prefix, 10),
-        allocator.get_core_for_thread("TestThread1", 10));
+        assert_eq!(
+            allocator.get_core_for_thread(thread_prefix, 10),
+            allocator.get_core_for_thread("TestThread1", 10)
+        );
     }
 
     #[test]
@@ -49,7 +51,9 @@ mod tests {
             let _ = allocator.get_core_for_thread(&thread_name, i);
         }
 
-        assert_eq!(allocator.get_core_for_thread(thread_prefix, 10),
-        allocator.get_core_for_thread("TestThread1", 10));
+        assert_eq!(
+            allocator.get_core_for_thread(thread_prefix, 10),
+            allocator.get_core_for_thread("TestThread1", 10)
+        );
     }
 }
